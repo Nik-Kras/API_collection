@@ -27,17 +27,23 @@ def main():
     response = requests.get('https://httpbin.org/ip')
     print("IP: ", json.dumps(response.json(), indent=4))
 
-    r = requests.put('https://httpbin.org/put', data={'key': 'value'})
-    print("Put: ", json.dumps(r.json(), indent=4))
+    r = requests.put('https://httpbin.org/pu', data={'key': 'value'})   # Made a typo put -> pu. Added if statement to avoid errors
+    print("r.status_code == requests.codes.ok", r.status_code == requests.codes.ok)
+    if r.status_code == requests.codes.ok:
+        print("Put: ", json.dumps(r.json(), indent=4))
+        print("r.raise_for_status(): ", r.raise_for_status())
 
     r = requests.delete('https://httpbin.org/delete')
     print("Delete: ", json.dumps(r.json(), indent=4))
 
     r = requests.head('https://httpbin.org/get')
     print("Head: ", r)
+    print("r.status_code == requests.codes.ok", r.status_code == requests.codes.ok)
 
-    r = requests.options('https://httpbin.org/get')
+    r = requests.options('https://httpbin.org/ge')  # Made a typo. get -> ge. Getting 404 instead of 200
     print("Options: ", r)
+    print("r.status_code == requests.codes.ok", r.status_code == requests.codes.ok)
+    #print("r.raise_for_status(): ", r.raise_for_status())
 
 if __name__ == '__main__':
     main()
