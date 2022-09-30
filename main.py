@@ -79,20 +79,31 @@ def get_weather(location, time):
 
 # Give Post Code, Get Coordinates: https://github.com/ideal-postcodes/postcodes.io
 def get_coordinates(post_code = "OX2 9RW"):
+
+    # Check the postcode
+    url = "http://api.postcodes.io/postcodes/" + post_code + "/validate"
+    response = requests.request("GET", url)
+    #print(json.dumps(response.json(), indent=4))
+
+    if not response.json()["result"]:
+        raise ValueError("PostCode is wrong!")
+
+    # Get coordinates
     url = "http://api.postcodes.io/postcodes/" + post_code
     response = requests.request("GET", url)
-    print(json.dumps(response.json(), indent=4))
+    # print(json.dumps(response.json(), indent=4))
 
     location = {"lat": response.json()["result"]["latitude"], "lng": response.json()["result"]["longitude"]}
+    print("Location: ", location)
     return location
 
 def main():
     post_code = "OX2 9RW"
     location = get_coordinates(post_code)                         # Get Log and Lat
-    weather_parameters = get_current_weather(location)            # Get weather by coordinates
+    #weather_parameters = get_current_weather(location)            # Get weather by coordinates
 
-    print("Weather data I have for Post Code: " + post_code)
-    print(weather_parameters)                                     # Use Weather parameters further...
+    #print("Weather data I have for Post Code: " + post_code)
+    #print(weather_parameters)                                     # Use Weather parameters further...
 
 if __name__ == '__main__':
     main()
