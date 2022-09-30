@@ -97,24 +97,17 @@ def get_current_weather_aeris():
 # The code was generated automatically with embedded tool from visualcrossing
 # INITIAL CODE AFTER GENERATION WAS NOT WORKING!!!
 def get_current_weather_visualcrossing():
-    try:
 
-        ResultBytes = urllib.request.urlopen(
-            "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/oxford/today?unitGroup=metric&key=VVDTF76WEHNACV5NRL7HBVC44&contentType=json")
-        # Parse the results as CSV
-        CSVText = csv.reader(codecs.iterdecode(ResultBytes, 'utf-8'))
-        # Parse the results as JSON
-        jsonData = json.loads(ResultBytes.code('utf-8'))
-    except urllib.error.HTTPError as e:
-        ErrorInfo = e.read().decode()
-        print('Error code: ', e.code, ErrorInfo)
-        sys.exit()
-    except  urllib.error.URLError as e:
-        ErrorInfo = e.read().decode()
-        print('Error code: ', e.code, ErrorInfo)
-        sys.exit()
+    city = "oxford"
+    time = "today"
+    API_KEY = "VVDTF76WEHNACV5NRL7HBVC44"
 
-    return jsonData
+    url = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/" + city + "/" + time + "?unitGroup=metric&key=" + API_KEY + "&contentType=json"
+    request = requests.request(method="GET",
+                               url=url)
+    data = request.json()
+
+    return data
 
 def get_weather(location, time):
     print("Weather: ")
