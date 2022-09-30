@@ -15,6 +15,10 @@ response.json()     # This method is convenient when the API returns JSON   (USE
 
 import requests
 import json
+import urllib
+import sys
+import csv
+import codecs
 
 def notes():
 
@@ -74,6 +78,44 @@ def get_current_weather(location=None):
     return weather_parameters
 
 
+# Was created with Aeris Api Wizard, a tool that generates code
+# According to your form filling (location, what data is needed, etc)
+# INITIAL CODE AFTER GENERATION WAS NOT WORKING!!!
+# First 1,000 calls are free
+def get_current_weather_aeris():
+
+    # request = urllib.request.urlopen(
+    #     'https://api.aerisapi.com/conditions/oxford, england?format=json&from=5 days ago&plimit=4&filter=15min&fields=loc,periods.tempC,periods.humidity,periods.windSpeedKPH,periods.weather&client_id=[CLIENT_ID]&client_secret=[CLIENT_SECRET]')
+
+    request = requests.request(method="GET", url="https://api.aerisapi.com/conditions/oxford, england?format=json&from=5 days ago&plimit=4&filter=15min&fields=loc,periods.tempC,periods.humidity,periods.windSpeedKPH,periods.weather&client_id=8TgYCRwa05Yfj4leMknpn&client_secret=qKEtajVSpaLbHhgJSdPK7cghRe1Ub3Fk2YU3XR4x")
+    data = request.json()
+    if not data['success']:
+        print("An error occurred: %s" % (data['error']['description']))
+
+    return data
+
+# The code was generated automatically with embedded tool from visualcrossing
+# INITIAL CODE AFTER GENERATION WAS NOT WORKING!!!
+def get_current_weather_visualcrossing():
+    try:
+
+        ResultBytes = urllib.request.urlopen(
+            "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/oxford/today?unitGroup=metric&key=VVDTF76WEHNACV5NRL7HBVC44&contentType=json")
+        # Parse the results as CSV
+        CSVText = csv.reader(codecs.iterdecode(ResultBytes, 'utf-8'))
+        # Parse the results as JSON
+        jsonData = json.loads(ResultBytes.code('utf-8'))
+    except urllib.error.HTTPError as e:
+        ErrorInfo = e.read().decode()
+        print('Error code: ', e.code, ErrorInfo)
+        sys.exit()
+    except  urllib.error.URLError as e:
+        ErrorInfo = e.read().decode()
+        print('Error code: ', e.code, ErrorInfo)
+        sys.exit()
+
+    return jsonData
+
 def get_weather(location, time):
     print("Weather: ")
 
@@ -100,10 +142,16 @@ def get_coordinates(post_code = "OX2 9RW"):
 def main():
     post_code = "OX2 9RW"
     location = get_coordinates(post_code)                         # Get Log and Lat
-    #weather_parameters = get_current_weather(location)            # Get weather by coordinates
+    weather_parameters = get_current_weather(location)            # Get weather by coordinates
 
-    #print("Weather data I have for Post Code: " + post_code)
-    #print(weather_parameters)                                     # Use Weather parameters further...
+    print("Weather data I have for Post Code: " + post_code)
+    print(weather_parameters)                                     # Use Weather parameters further...
+
+    print("Another source: ")
+    print(get_current_weather_aeris())
+
+    print("Another source #2: ")
+    print(get_current_weather_visualcrossing())
 
 if __name__ == '__main__':
     main()
